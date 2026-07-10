@@ -68,17 +68,19 @@ class ApplyInternalLinks extends Modifier
                     continue;
                 }
 
-                $contentBefore = $parser->getContent();
+                foreach (self::splitKeywordVariants($keyword) as $keywordVariant) {
+                    $contentBefore = $parser->getContent();
 
-                $parser->replaceKeyword($keyword, $targetUrl, [
-                    'max' => 1,
-                    'nofollow' => (bool) $link->get('nofollow', false),
-                    'target_blank' => (bool) $link->get('open_in_new_window', false),
-                ]);
+                    $parser->replaceKeyword($keywordVariant, $targetUrl, [
+                        'max' => 1,
+                        'nofollow' => (bool) $link->get('nofollow', false),
+                        'target_blank' => (bool) $link->get('open_in_new_window', false),
+                    ]);
 
-                if ($parser->getContent() !== $contentBefore) {
-                    self::$usedTargetUrls[$targetUrl] = true;
-                    break;
+                    if ($parser->getContent() !== $contentBefore) {
+                        self::$usedTargetUrls[$targetUrl] = true;
+                        break 2;
+                    }
                 }
             }
         }
@@ -86,6 +88,17 @@ class ApplyInternalLinks extends Modifier
         $linkedContent = $parser->getContent();
 
         return $value instanceof Htmlable ? new HtmlString($linkedContent) : $linkedContent;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function splitKeywordVariants(string $keyword): array
+    {
+        return array_values(array_filter(
+            array_map('trim', explode(',', $keyword)),
+            static fn (string $variant): bool => $variant !== ''
+        ));
     }
 
     private function isAllowedCollection($context): bool

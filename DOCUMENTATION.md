@@ -117,8 +117,16 @@ Go to **CP → Collections → Blog Internal Linking** and create a new entry.
 
 Each row in the **Keywords** replicator has:
 
-- **Word / phrase** — the exact text to match, e.g. `coral reef`, `artificial rocks`. Case-insensitive.
-- **Language** — optional. Leave empty to match on all language versions of your site. Set to a specific locale (e.g. `en`) to match only on English pages.
+- **Word / phrase** — the exact text to match, e.g. `coral reef`, `artificial rocks`. Case-insensitive. You can enter several word or phrase variants in one field by separating them with commas, e.g. `artificial rock, artificial rocks, rockwork`.
+- **Language** — optional. Leave empty to match on all language versions of your site. Set to a specific locale (e.g. `en`) to match only on English pages. When one row contains several comma-separated variants, the language setting applies to all variants in that row.
+
+Comma-separated variants are useful for inflected languages where several forms should link to the same target page:
+
+```text
+sztuczne skały, sztucznych skał, sztucznymi skałami
+```
+
+The variants behave like separate keyword rows that share the same language and target entry. They are tried in the order entered, and once one variant creates a link for that internal-link entry, the remaining variants in that row are skipped for the current page request.
 
 ---
 
@@ -189,7 +197,9 @@ The **Target page** field is set once. The modifier calls `Entry::in($site)` int
   - WordPress embed comments
 - **Deduplication** — each target URL is linked **at most once per page request**. If `coral reef` and `reef` both point to the same page, only the first match wins.
 - **Priority** — entries are processed in descending `weight` order. Higher weight = matched first.
-- **Max one link per keyword per page** — after a keyword successfully creates a link, that entry is done for the current page.
+- **Comma-separated variants** — a keyword row can contain variants separated by commas. Variants are trimmed, empty variants are ignored, and they are tested in the order entered.
+- **Max one link per internal-link entry per page** — after any keyword or comma-separated variant successfully creates a link, that entry is done for the current page.
+- **Literal commas are not supported inside keywords** — a comma always separates variants. If your phrase must contain a comma as part of the exact text, it cannot be represented as one literal keyword in this version.
 
 ---
 
@@ -202,7 +212,7 @@ Full list of fields in `resources/blueprints/collections/internal_links/internal
 - handle: target_entry   # entries picker, max 1, required
 - handle: keywords         # replicator
     - handle: keyword    # text, required
-    - handle: locale     # select (optional) — pl, en, de, fr, es, it, nl, sv, no, da, lv, cs
+    - handle: locale     # select (optional) — pl, en, de, fr, es, it, nl, sv, no, da, lv, cs, bg
 - handle: weight         # integer, default 0
 - handle: nofollow       # toggle, default false
 - handle: open_in_new_window  # toggle, default false

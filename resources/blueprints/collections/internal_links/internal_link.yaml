@@ -33,7 +33,7 @@ tabs:
             field:
               type: replicator
               display: 'Keywords'
-              instructions: 'Add one row per keyword. Set Language to restrict a keyword to one locale, or leave empty to match all languages.'
+              instructions: 'Add one row per keyword group. You can enter several word variants in one Word / phrase field separated by commas. Set Language to restrict all variants in that row to one locale, or leave empty to match all languages.'
               sets:
                 main:
                   sets:
@@ -45,7 +45,7 @@ tabs:
                           field:
                             type: text
                             display: 'Word / phrase'
-                            instructions: 'E.g. "artificial rocks", "coral reef aquarium"'
+                            instructions: 'E.g. "artificial rocks" or several variants separated by commas: "artificial rock, artificial rocks, rockwork". Literal commas inside a keyword are not supported.'
                             required: true
                             validate:
                               - required
@@ -70,6 +70,7 @@ tabs:
                               da: 'Danish (da)'
                               lv: 'Latvian (lv)'
                               cs: 'Czech (cs)'
+                              bg: 'Bulgarian (bg)'
               required: true
               validate:
                 - required

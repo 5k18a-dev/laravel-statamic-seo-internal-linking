@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2026-07-10
+
+### Added
+- Keyword rows now support several comma-separated word or phrase variants in a single **Word / phrase** field.
+- `ApplyInternalLinks::splitKeywordVariants()` helper for testing and documenting comma-splitting behavior.
+- Bulgarian (`bg`) option in the keyword locale selector to match the current multisite setup.
+
+### Changed
+- A keyword row with multiple variants keeps the existing deduplication behavior: the target URL is linked at most once per page request, and variants are tried in the order entered.
+- Blueprint instructions now explain comma-separated variants and the literal-comma limitation.
+- `VERSION.md` synchronized with the package version.
+
 ## [0.3.0] - 2026-06-22
 
 ### Added

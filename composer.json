@@ -1,7 +1,7 @@
 {
     "name": "5k18a/blog-internal-links",
     "description": "Statamic addon for automatic keyword-based internal linking with per-locale keyword support",
-    "version": "0.3.0",
+    "version": "0.4.0",
     "license": "proprietary",
     "authors": [
         {
