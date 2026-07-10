@@ -75,8 +75,8 @@ The modifier also works on any string or HTML field:
 Go to **CP → Collections → Blog Internal Linking** and create one entry per target page.
 
 Each keyword row in the replicator has two fields:
-- **Word / phrase** — the text to match (case-insensitive)
-- **Language** — optional locale code (`en`, `de`, `fr`, …). Leave empty to apply to all languages.
+- **Word / phrase** — the text to match (case-insensitive). You can enter several variants in one field separated by commas, e.g. `sztuczne skały, sztucznych skał, sztucznymi skałami` — useful for inflected languages. Variants are trimmed, empty ones are ignored, and a literal comma cannot be part of a keyword.
+- **Language** — optional locale code (`en`, `de`, `fr`, …). Leave empty to apply to all languages. When a row has several comma-separated variants, the language applies to all of them.
 
 Example configuration for one entry:
 
@@ -99,7 +99,8 @@ The modifier automatically:
 - Existing links, headings, figures, images, iframes, and WordPress embed comments are protected from replacement.
 - Matching is case-insensitive and respects Unicode word boundaries.
 - Higher `weight` means earlier processing when keywords conflict.
-- **Deduplication:** each target URL is linked at most once per page request.
+- **Comma-separated variants:** a keyword row may hold several variants; they are tried in order and the first one that matches wins for that entry.
+- **Deduplication:** each target URL is linked at most once per page request. After any variant creates a link, the whole internal-link entry is done for that page.
 
 ## Blueprint Fields
 
