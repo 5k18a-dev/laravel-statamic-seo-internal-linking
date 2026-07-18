@@ -1,7 +1,7 @@
 {
     "name": "5k18a/blog-internal-links",
-    "description": "Statamic addon for automatic keyword-based internal linking with per-locale keyword support",
-    "version": "0.4.0",
+    "description": "Statamic addon for automatic keyword-based internal linking across configured source collections with per-locale keyword support",
+    "version": "0.5.0",
     "license": "proprietary",
     "authors": [
         {
@@ -30,7 +30,7 @@
     "extra": {
         "statamic": {
             "name": "Blog Internal Linking",
-            "description": "Automatic keyword-based internal linking for blog content with per-locale keyword support"
+            "description": "Automatic keyword-based internal linking across configured source collections with per-locale keyword support"
         },
         "laravel": {
             "providers": [

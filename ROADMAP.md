@@ -11,6 +11,7 @@
 - [x] Deduplication: each target URL linked at most once per page
 - [x] `php artisan internal-links:install` command
 - [x] Real-time substitution at render time
+- [x] Multi-collection source guard via `collections` config with legacy `blog_collection` fallback
 
 ## Variant B — Production-ready
 

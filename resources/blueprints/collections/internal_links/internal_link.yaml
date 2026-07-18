@@ -11,7 +11,7 @@ tabs:
               type: text
               required: true
               display: 'Name (admin label, not displayed)'
-              instructions: 'E.g. "Aquarium rocks → Decorative Aquariums page". Linking works in blog entry content only.'
+              instructions: 'E.g. "Aquarium rocks → Decorative Aquariums page". Linking works in configured source collections, such as blog entries and project overviews.'
               validate:
                 - required
           -

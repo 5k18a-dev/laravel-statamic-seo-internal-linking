@@ -32,9 +32,9 @@ The install command:
 1. Publishes `config/internal-links.php`
 2. Creates `content/collections/internal_links.yaml`
 3. Publishes the blueprint to `resources/blueprints/collections/internal_links/`
-4. **Auto-detects** your blog collection by scanning collection handles for keywords like `blog`, `post`, `articles`, `news`
+4. **Auto-detects** your primary blog collection by scanning collection handles for keywords like `blog`, `post`, `articles`, `news`
 5. On a multisite install, asks which site you use to manage content in the CP
-6. Writes the detected values into `config/internal-links.php`
+6. Writes the detected values into `config/internal-links.php`, using `collections` as the canonical source-collection key and `blog_collection` as a legacy alias
 7. Runs `php artisan statamic:stache:refresh`
 
 ### Manual install
@@ -67,22 +67,25 @@ propagate: false
 
 The collection should always be scoped to **one site** — your admin/content language. Keywords for other languages are managed within each entry using the `locale` field.
 
-### Blog collection
+### Source collections
 
-The blog collection is configured once in `config/internal-links.php` (created automatically by the install command):
+Source collections are configured once in `config/internal-links.php` (created automatically by the install command):
 
 ```php
 return [
-    'blog_collection' => 'blog',  // handle of your blog collection
-    'admin_site'      => 'en',    // site used to manage internal_links in CP
+    'collections'     => ['blog', 'projects'], // source collections where the modifier may run
+    'blog_collection' => 'blog',                // legacy fallback used only when collections is null/empty
+    'admin_site'      => 'en',                  // site used to manage internal_links in CP
 ];
 ```
 
-The modifier only processes content on entries that belong to `blog_collection` — it silently skips all other pages. If `blog_collection` is empty or `null`, the guard is disabled and the modifier runs everywhere it is placed.
+The modifier only processes content on entries that belong to `collections` — it silently skips all other entries. Use this key for new installs.
+
+Existing installs that only have `blog_collection` continue to work. The addon falls back to `blog_collection` when `collections` is `null`, empty, or not a non-empty array. If both `collections` and `blog_collection` are empty, the guard is disabled and the modifier runs everywhere it is placed.
 
 ### Collections for target entries
 
-The blueprint's `target_entry` picker defaults to `pages`, `services`, and `projects`. To add more collections, publish the blueprint and edit `resources/blueprints/collections/internal_links/internal_link.yaml`:
+Do not confuse source `collections` with target-entry collections. Source `collections` control where the modifier may run. The blueprint's `target_entry` picker controls which entries can be selected as link targets and defaults to `pages`, `services`, and `projects`. To add more target collections, publish the blueprint and edit `resources/blueprints/collections/internal_links/internal_link.yaml`:
 
 ```yaml
 handle: target_entry
@@ -157,6 +160,14 @@ Inside a Bard loop, apply it to the `text` variable in the `else` branch (plain 
 {{ wysiwyg_html | apply_internal_links }}
 ```
 
+### Project overview field
+
+If `projects` is listed in `config('internal-links.collections')`, you can apply the modifier to a project overview field:
+
+```antlers
+{{ overview_section:overvie | apply_internal_links }}
+```
+
 ### Any HTML field
 
 The modifier accepts any string or HTML value:
@@ -225,7 +236,7 @@ Full list of fields in `resources/blueprints/collections/internal_links/internal
 
 ### Links are not appearing
 
-1. Check that `config/internal-links.php` exists and `blog_collection` matches your blog collection handle exactly (e.g. `blog`, not `Blog`).
+1. Check that `config/internal-links.php` exists and `collections` contains the current entry collection handle exactly (e.g. `blogs`, not `Blogs`). For legacy installs, check that `blog_collection` is correct when `collections` is null or empty.
 2. Check that the entry in the `Blog Internal Linking` collection has **Active** set to `true`.
 3. Verify the keyword exists verbatim in the rendered HTML (check page source, not browser inspector which may alter whitespace).
 4. Confirm the modifier is applied in the correct template and branch of the Bard loop.

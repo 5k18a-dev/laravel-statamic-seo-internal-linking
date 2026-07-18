@@ -2,7 +2,7 @@
 
 ![Blog Internal Linking](gfx/cover.png)
 
-A Statamic 6 addon for automatic keyword-based internal linking in blog content.
+A Statamic 6 addon for automatic keyword-based internal linking in configured source collections, such as blog posts and project overview content.
 
 Works at render time via an Antlers modifier. Uses a native Statamic `internal_links` collection as storage for keyword → entry mappings. Supports per-locale keywords in a single entry — no multisite propagation required.
 
@@ -25,7 +25,7 @@ The install command:
 - Publishes the blueprint to `resources/blueprints/collections/internal_links/`
 - **Auto-detects** your blog collection by scanning collection handles for keywords like `blog`, `post`, `articles`, `news`
 - On multisite installs, asks which site you use to manage content in the CP
-- Writes detected values into `config/internal-links.php`
+- Writes detected values into `config/internal-links.php` using `collections` as the canonical source-collection key and `blog_collection` as a legacy alias
 - Runs `php artisan statamic:stache:refresh`
 
 ### Manual install (alternative)
@@ -44,14 +44,19 @@ After install, review `config/internal-links.php`:
 
 ```php
 return [
-    'blog_collection' => 'blog',  // handle of your blog collection
-    'admin_site'      => 'en',    // site used to manage internal_links in CP
+    'collections'     => ['blog', 'projects'], // source collections where the modifier may run
+    'blog_collection' => 'blog',                // legacy fallback used only when collections is null/empty
+    'admin_site'      => 'en',                  // site used to manage internal_links in CP
 ];
 ```
 
+Use `collections` for new installs. Existing installs that only have `blog_collection` continue to work because the addon falls back to that key when `collections` is null, empty, or not a non-empty array.
+
 ## Usage
 
-Add the modifier inside your blog Antlers template, within the Bard field loop:
+Add the modifier inside your Antlers template, within the fields that should receive automatic links.
+
+Blog Bard field example:
 
 ```antlers
 {{ content }}
@@ -68,6 +73,7 @@ The modifier also works on any string or HTML field:
 ```antlers
 {{ free_text_content | apply_internal_links }}
 {{ wysiwyg_html | apply_internal_links }}
+{{ overview_section:overvie | apply_internal_links }}
 ```
 
 ## Managing Internal Links
@@ -94,7 +100,7 @@ The modifier automatically:
 ## Behaviour
 
 - Only active (`enabled: true`) entries from the `internal_links` collection are processed.
-- The modifier only runs on entries belonging to the `blog_collection` defined in config — all other pages are skipped silently.
+- The modifier only runs on entries belonging to the configured source `collections` — all other entries are skipped silently. If `collections` is null, empty, or not a non-empty array, the legacy `blog_collection` value is used instead.
 - The target URL resolves to the current site's language automatically.
 - Existing links, headings, figures, images, iframes, and WordPress embed comments are protected from replacement.
 - Matching is case-insensitive and respects Unicode word boundaries.

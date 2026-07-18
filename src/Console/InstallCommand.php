@@ -29,11 +29,12 @@ class InstallCommand extends Command
         $this->components->info('Blog Internal Linking installed successfully.');
         $this->line('');
         $this->line('  Configuration written to <fg=cyan>config/internal-links.php</>');
-        $this->line('  Blog collection: <fg=yellow>'.$blogCollection.'</>');
-        $this->line('  Admin site:      <fg=yellow>'.$adminSite.'</>');
+        $this->line('  Primary source collection: <fg=yellow>'.$blogCollection.'</>');
+        $this->line('  Admin site:                <fg=yellow>'.$adminSite.'</>');
         $this->line('');
-        $this->line('  Next step — add the modifier to your blog Bard template:');
+        $this->line('  Next step — add the modifier to the content fields you want to auto-link:');
         $this->line('  <fg=green>{{ text | apply_internal_links }}</>');
+        $this->line('  To enable more source collections, edit <fg=cyan>internal-links.collections</>.');
         $this->line('');
         $this->line('  See <fg=cyan>DOCUMENTATION.md</> for full setup instructions.');
 
@@ -152,6 +153,7 @@ class InstallCommand extends Command
         $target = config_path('internal-links.php');
 
         $contents = File::get($target);
+        $contents = $this->replaceOrInsertCollections($contents, $blogCollection);
         $contents = preg_replace(
             "/'blog_collection'\s*=>\s*'[^']*'/",
             "'blog_collection' => '{$blogCollection}'",
@@ -164,5 +166,29 @@ class InstallCommand extends Command
         );
 
         File::put($target, $contents);
+    }
+
+    private function replaceOrInsertCollections(string $contents, string $blogCollection): string
+    {
+        $collectionsLine = "'collections' => ['".$this->escapeConfigValue($blogCollection)."']";
+
+        if (preg_match("/'collections'\s*=>/", $contents)) {
+            return preg_replace(
+                "/'collections'\s*=>\s*(?:null|\[[^\]]*\])/",
+                $collectionsLine,
+                $contents
+            ) ?? $contents;
+        }
+
+        return preg_replace(
+            "/('blog_collection'\s*=>)/",
+            $collectionsLine.",\n\n    $1",
+            $contents
+        ) ?? $contents;
+    }
+
+    private function escapeConfigValue(string $value): string
+    {
+        return str_replace("'", "\\'", $value);
     }
 }

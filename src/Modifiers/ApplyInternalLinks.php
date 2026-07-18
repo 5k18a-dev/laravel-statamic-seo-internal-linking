@@ -103,10 +103,10 @@ class ApplyInternalLinks extends Modifier
 
     private function isAllowedCollection($context): bool
     {
-        $blogCollection = config('internal-links.blog_collection');
+        $allowedCollections = $this->allowedCollections();
 
         // If not configured, run everywhere the modifier is placed.
-        if (! $blogCollection) {
+        if ($allowedCollections === []) {
             return true;
         }
 
@@ -124,7 +124,39 @@ class ApplyInternalLinks extends Modifier
             $currentCollection = $currentCollection->handle();
         }
 
-        return (string) $currentCollection === $blogCollection;
+        return in_array((string) $currentCollection, $allowedCollections, true);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private function allowedCollections(): array
+    {
+        $collections = config('internal-links.collections');
+
+        if (is_array($collections)) {
+            $normalizedCollections = $this->normalizeCollectionHandles($collections);
+
+            if ($normalizedCollections !== []) {
+                return $normalizedCollections;
+            }
+        }
+
+        $blogCollection = trim((string) config('internal-links.blog_collection', ''));
+
+        return $blogCollection === '' ? [] : [$blogCollection];
+    }
+
+    /**
+     * @param  array<int, mixed>  $collections
+     * @return array<int, string>
+     */
+    private function normalizeCollectionHandles(array $collections): array
+    {
+        return array_values(array_unique(array_filter(
+            array_map(static fn ($collection): string => trim((string) $collection), $collections),
+            static fn (string $collection): bool => $collection !== ''
+        )));
     }
 
     private function stringValue($value): ?string

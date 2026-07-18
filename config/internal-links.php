@@ -4,12 +4,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Blog Collection Handle
+    | Source Collection Handles
     |--------------------------------------------------------------------------
     |
-    | The handle of the Statamic collection that contains your blog posts.
-    | The apply_internal_links modifier will only run on entries belonging
-    | to this collection. Common values: blog, posts, articles, news.
+    | The Statamic collection handles where the apply_internal_links modifier
+    | is allowed to run. Set this to an array such as ['blog', 'projects'].
+    | Leave it null or empty to fall back to the legacy blog_collection key.
+    |
+    */
+
+    'collections' => null,
+
+    /*
+    |--------------------------------------------------------------------------
+    | Legacy Blog Collection Handle
+    |--------------------------------------------------------------------------
+    |
+    | Deprecated alias kept for backward compatibility with existing installs.
+    | Used only when collections is null, empty, or not a non-empty array.
     |
     */
 

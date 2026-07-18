@@ -5,6 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-07-18
+
+### Added
+- Multi-collection source guard via `config/internal-links.php` key `collections`.
+- Support for injecting internal links into project overview content when the host application applies the modifier there.
+- Backward-compatible fallback to the legacy `blog_collection` key when `collections` is null, empty, or not a non-empty array.
+- Installer and documentation updates for source collections beyond blog entries.
+- Regression coverage for `collections` priority and legacy `blog_collection` fallback.
+
+### Changed
+- Blueprint instructions no longer describe auto-linking as blog-only.
+- Package metadata now describes configured source collections instead of only blog content.
+
 ## [0.4.0] - 2026-07-10
 
 ### Added
